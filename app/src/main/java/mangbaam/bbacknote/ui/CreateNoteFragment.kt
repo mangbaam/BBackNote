@@ -20,6 +20,10 @@ class CreateNoteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_create_note, container, false)
+        binding.chkLock.setOnCheckedChangeListener { _, checked ->
+            if(checked) binding.etPassword.visibility = View.VISIBLE
+            else binding.etPassword.visibility = View.INVISIBLE
+        }
 
         return binding.root
     }
