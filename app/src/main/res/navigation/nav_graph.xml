@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/noteListFragment">
 
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="mangbaam.bbacknote.ui.NoteListFragment"
+        android:label="NoteListFragment" >
+        <action
+            android:id="@+id/action_noteListFragment_to_createNoteFragment"
+            app:destination="@id/createNoteFragment"
+            app:enterAnim="@anim/slide_up"
+            app:popExitAnim="@anim/slide_down" />
+    </fragment>
+    <fragment
+        android:id="@+id/createNoteFragment"
+        android:name="mangbaam.bbacknote.ui.CreateNoteFragment"
+        android:label="CreateNoteFragment" />
 </navigation>

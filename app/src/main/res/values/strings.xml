@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">BBackNote</string>
+    <string name="app_name">빡노트 🔥</string>
+    <string name="description_menu_note_list_search">search note in list</string>
+    <string name="menu_note_list_search">search</string>
 </resources>
