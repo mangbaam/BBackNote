@@ -29,6 +29,14 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
         }
     }
 
+    fun lockNote(note: NoteEntity) {
+        val lockedNote = note.copy(secret = true)
+        viewModelScope.launch {
+            repository.updateNote(lockedNote)
+            getAllNotes()
+        }
+    }
+
     fun updateNote(note: NoteEntity) {
         viewModelScope.launch {
             repository.updateNote(note)
@@ -38,6 +46,7 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
     fun deleteNote(note: NoteEntity) {
         viewModelScope.launch {
             repository.deleteNote(note)
+            getAllNotes()
         }
     }
 
