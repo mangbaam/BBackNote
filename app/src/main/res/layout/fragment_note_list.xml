@@ -26,6 +26,7 @@
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|snap|enterAlways"
                 app:menu="@menu/menu_note_list"
+                app:titleTextColor="@color/white"
                 app:navigationIcon="@drawable/ic_baseline_menu_24"
                 app:title="@string/app_name" />
         </com.google.android.material.appbar.AppBarLayout>
