@@ -62,4 +62,8 @@ dependencies {
     /* Lottie */
     def lottieVersion = "5.0.3"
     implementation "com.airbnb.android:lottie:$lottieVersion"
+
+    /* EncryptedSharedPreference */
+    implementation "androidx.security:security-crypto:1.0.0"
+
 }
