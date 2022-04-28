@@ -36,7 +36,6 @@ class CreateNoteFragment : Fragment() {
                     floatInputPasswordDialog()
                 } else {
                     val note = NoteEntity(
-                        0,
                         binding.noteContent.text.toString().trim(),
                         binding.chkLock.isChecked,
                         R.drawable.rectangle_corner8_white
