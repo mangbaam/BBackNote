@@ -7,7 +7,7 @@
 
         <variable
             name="viewmodel"
-            type="mangbaam.bbacknote.ui.NoteListViewModel" />
+            type="mangbaam.bbacknote.ui.MainViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -63,8 +63,10 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:clickable="true"
+            android:focusable="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:contentDescription="@string/description_fab_add_note" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
