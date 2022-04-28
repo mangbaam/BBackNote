@@ -5,4 +5,5 @@
     <string name="btn_save_note">저장</string>
     <string name="hint_password">암호</string>
     <string name="chk_lock_memo">메모 잠금</string>
+    <string name="description_fab_add_note">Add note button</string>
 </resources>

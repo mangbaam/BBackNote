@@ -5,7 +5,7 @@ import mangbaam.bbacknote.model.NoteEntity
 
 @Dao
 interface NoteDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(note: NoteEntity)
 
     @Update

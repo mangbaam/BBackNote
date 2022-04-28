@@ -15,11 +15,6 @@
             app:launchSingleTop="true"
             app:popExitAnim="@anim/slide_down"
             app:popUpTo="@id/noteListFragment" />
-        <argument
-            android:name="NewNote"
-            app:argType="mangbaam.bbacknote.model.NoteEntity"
-            app:nullable="true"
-            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/createNoteFragment"
@@ -28,6 +23,7 @@
         <action
             android:id="@+id/action_createNoteFragment_to_noteListFragment"
             app:destination="@id/noteListFragment"
-            app:exitAnim="@anim/slide_down" />
+            app:exitAnim="@anim/slide_down"
+            app:launchSingleTop="true" />
     </fragment>
 </navigation>

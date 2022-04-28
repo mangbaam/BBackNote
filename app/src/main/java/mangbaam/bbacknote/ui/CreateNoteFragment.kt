@@ -5,9 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentCreateNoteBinding
@@ -18,15 +18,23 @@ class CreateNoteFragment : Fragment() {
     private var _binding: FragmentCreateNoteBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel: MainViewModel by lazy {
+        ViewModelProvider(
+            requireActivity(),
+            ViewModelFactory(requireContext())
+        )[MainViewModel::class.java]
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = DataBindingUtil.inflate(inflater, R.layout.fragment_create_note, container, false)
+        _binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_create_note, container, false)
 
         binding.chkLock.setOnCheckedChangeListener { _, checked ->
-            if(checked) binding.etPassword.visibility = View.VISIBLE
+            if (checked) binding.etPassword.visibility = View.VISIBLE
             else binding.etPassword.visibility = View.INVISIBLE
         }
 
@@ -40,9 +48,9 @@ class CreateNoteFragment : Fragment() {
                         binding.chkLock.isChecked,
                         R.drawable.rectangle_corner8_white
                     )
-                    val bundle = bundleOf("newNote" to note)
-                    // TODO 노트 ROOM에 저장
-                    binding.root.findNavController().navigate(R.id.action_createNoteFragment_to_noteListFragment, bundle)
+                    viewModel.addNote(note)
+                    binding.root.findNavController()
+                        .navigate(R.id.action_createNoteFragment_to_noteListFragment)
                 }
             } else {
                 Toast.makeText(it.context, "작성된 내용이 없어서 저장하지 않습니다", Toast.LENGTH_LONG).show()
