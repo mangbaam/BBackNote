@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/lock_note_item"
+        android:title="노트 잠금"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/delete_note_item"
+        android:title="노트 삭제"
+        app:showAsAction="never" />
+
+</menu>

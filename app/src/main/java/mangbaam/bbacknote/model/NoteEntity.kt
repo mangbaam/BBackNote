@@ -1,10 +1,10 @@
 package mangbaam.bbacknote.model
 
-import android.graphics.Color
+import java.io.Serializable
 
 data class NoteEntity(
     val id: Int,
     val content: String,
     val secret: Boolean,
-    val noteColor: Color
-)
+    val noteColor: Int
+): Serializable

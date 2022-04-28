@@ -12,10 +12,22 @@
             android:id="@+id/action_noteListFragment_to_createNoteFragment"
             app:destination="@id/createNoteFragment"
             app:enterAnim="@anim/slide_up"
-            app:popExitAnim="@anim/slide_down" />
+            app:launchSingleTop="true"
+            app:popExitAnim="@anim/slide_down"
+            app:popUpTo="@id/noteListFragment" />
+        <argument
+            android:name="NewNote"
+            app:argType="mangbaam.bbacknote.model.NoteEntity"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/createNoteFragment"
         android:name="mangbaam.bbacknote.ui.CreateNoteFragment"
-        android:label="CreateNoteFragment" />
+        android:label="CreateNoteFragment" >
+        <action
+            android:id="@+id/action_createNoteFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:exitAnim="@anim/slide_down" />
+    </fragment>
 </navigation>
