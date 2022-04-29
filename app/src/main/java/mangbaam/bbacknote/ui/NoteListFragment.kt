@@ -111,7 +111,7 @@ class NoteListFragment : Fragment() {
 
         searchView = (menu.findItem(R.id.search_note).actionView as SearchView).apply {
             maxWidth = Integer.MAX_VALUE
-            queryHint = "노트 내용으로 검색합니다"
+            queryHint = "노트 제목, 내용으로 검색합니다"
             setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
             setOnQueryTextListener(queryTextListener)
         }
