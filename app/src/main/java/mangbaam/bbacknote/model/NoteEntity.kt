@@ -6,6 +6,7 @@ import java.io.Serializable
 
 @Entity
 data class NoteEntity(
+    val title: String = "",
     val content: String,
     var secret: Boolean,
     val noteColor: Int
