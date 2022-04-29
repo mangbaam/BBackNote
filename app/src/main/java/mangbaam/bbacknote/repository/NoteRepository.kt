@@ -10,4 +10,6 @@ class NoteRepository(private val dataSource: NoteLocalDataSource) {
     suspend fun deleteNote(note: NoteEntity) { dataSource.deleteNote(note) }
 
     suspend fun getAllNotes() = dataSource.getAllNotes()
+
+    suspend fun deleteAllNotes() { dataSource.deleteAllNotes() }
 }

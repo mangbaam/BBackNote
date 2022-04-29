@@ -9,7 +9,7 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/changed_password"
+        android:id="@+id/change_user_password"
         android:contentDescription="@string/description_change_password_menu"
         android:title="@string/title_menu_note_list_change_password"
         app:showAsAction="never" />

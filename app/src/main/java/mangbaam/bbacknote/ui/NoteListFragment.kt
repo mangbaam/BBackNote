@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.adapter.NoteListAdapter
@@ -25,6 +27,8 @@ import mangbaam.bbacknote.util.RecyclerViewUtil
 class NoteListFragment : Fragment() {
     private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
+    private var toast: Toast? = null
+
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
             requireActivity(),
@@ -43,6 +47,7 @@ class NoteListFragment : Fragment() {
         viewModel.getAllNotes()
 
         initRecyclerView()
+        onOptionItemsSelectListener()
 
         binding.fabAddNote.setOnClickListener {
             it.findNavController().navigate(R.id.action_noteListFragment_to_createNoteFragment)
@@ -51,12 +56,23 @@ class NoteListFragment : Fragment() {
         return binding.root
     }
 
-    private fun initRecyclerView() {
+    private fun onOptionItemsSelectListener() {
+        binding.toolbarNoteList.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.change_user_password -> changeUserPassword()
+                R.id.lock_all_notes -> lockAllNotes()
+                R.id.unlock_all_notes -> unlockAllNotes()
+                R.id.delete_all_notes -> deleteAllNotes()
+            }
+            true
+        }
+    }
 
+    private fun initRecyclerView() {
         listAdapter = NoteListAdapter { note, item ->
             when (item) {
                 NoteListAdapter.ClickedItem.CONTENT -> {
-                    Toast.makeText(requireContext(), "$note 컨텐츠 확인", Toast.LENGTH_SHORT).show()
+                    makeToast("$note 컨텐츠 확인")
                 }
                 NoteListAdapter.ClickedItem.LOCK_NOTE -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()
@@ -126,6 +142,82 @@ class NoteListFragment : Fragment() {
         }
     }
 
+
+    private fun deleteAllNotes() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("모든 노트가 삭제됩니다")
+            .setMessage("삭제된 메시지는 복구할 수 없습니다. 그래도 삭제하시겠습니까?")
+            .setIcon(R.drawable.ic_warning_hotpink)
+            .setNegativeButton("취소") { dialog, _ ->
+                dialog.cancel()
+            }
+            .setNeutralButton("닫기") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("전체 삭제") { dialog, _ ->
+                dialog.dismiss()
+                requirePasswordDialog { result ->
+                    if (result) viewModel.deleteAllNotes()
+                }
+            }
+            .create()
+            .show()
+    }
+
+    private fun unlockAllNotes() {
+        requirePasswordDialog { result ->
+            if (!result) return@requirePasswordDialog
+            viewModel.unlockAllNotes()
+        }
+    }
+
+    private fun lockAllNotes() {
+        requirePasswordDialog { result ->
+            if (!result) return@requirePasswordDialog
+            viewModel.lockAllNotes()
+        }
+    }
+
+    private fun changeUserPassword() {
+        AlertDialog.Builder(requireContext())
+            .setView(R.layout.dialog_change_password)
+            .show()
+            .also { dialog ->
+                if (dialog == null) return@also
+
+                val currentPasswordEditText =
+                    dialog.findViewById<TextInputEditText>(R.id.et_current_password)
+                val newPasswordEditText =
+                    dialog.findViewById<TextInputEditText>(R.id.et_new_password)
+                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
+                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                cancelButton?.setOnClickListener {
+                    dialog.dismiss()
+                }
+                completeButton?.setOnClickListener {
+                    val password = currentPasswordEditText?.text?.trim().toString()
+                    val currentPassword = MyApplication.encryptedPrefs.getPassword()
+
+                    val correspond = password == currentPassword
+                    if (!correspond) {
+                        makeToast("현재 비밀번호가 일치하지 않습니다")
+                    } else {
+                        if (newPasswordEditText?.text?.toString().isNullOrBlank()) {
+                            makeToast("비밀번호에 공백이 올 수 없습니다")
+                        } else {
+                            MyApplication.encryptedPrefs.setPassword(
+                                newPasswordEditText?.text?.trim().toString()
+                            )
+                            makeToast("비밀번호가 성공적으로 변경되었습니다")
+                            dialog.dismiss()
+                        }
+                    }
+                }
+            }
+    }
+
+
     private fun requirePasswordDialog(result: ((Boolean) -> Unit)) {
         AlertDialog.Builder(requireContext())
             .setView(R.layout.dialog_require_password)
@@ -146,7 +238,7 @@ class NoteListFragment : Fragment() {
                     val same = password == userPassword
                     result(same)
                     if (!same) {
-                        Toast.makeText(it.context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                        makeToast("비밀번호가 일치하지 않습니다")
                     }
                     dialog.dismiss()
                 }
@@ -189,8 +281,15 @@ class NoteListFragment : Fragment() {
             }
     }
 
+    private fun makeToast(msg: String) {
+        toast?.cancel()
+        toast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
+        toast?.show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        toast = null
         _binding = null
     }
 }

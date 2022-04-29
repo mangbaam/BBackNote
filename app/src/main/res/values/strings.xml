@@ -21,4 +21,7 @@
     <string name="title_menu_note_list_unlock_all_notes">모든 노트 잠금 해제</string>
     <string name="description_menu_note_list_delete_all_notes">delete every notes</string>
     <string name="title_menu_note_list_delete_all_notes">모든 노트 삭제</string>
+    <string name="title_dialog_change_password">비밀번호를 변경합니다</string>
+    <string name="hint_dialog_change_password_edittext_current">현재 비밀 번호</string>
+    <string name="hint_dialog_change_password_edittext_new">새로운 비밀 번호</string>
 </resources>

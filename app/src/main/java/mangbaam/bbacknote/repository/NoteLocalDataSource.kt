@@ -18,4 +18,6 @@ class NoteLocalDataSource(context: Context) : NoteDataSource {
     override suspend fun updateNote(note: NoteEntity) = withContext(Dispatchers.IO) { db.update(note) }
 
     override suspend fun getAllNotes() = withContext(Dispatchers.IO) { db.getAllNote() }
+
+    override suspend fun deleteAllNotes() = withContext(Dispatchers.IO) { db.deleteAllNotes() }
 }

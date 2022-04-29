@@ -58,4 +58,30 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
         }
     }
 
+    fun lockAllNotes() {
+        viewModelScope.launch {
+            _noteList.value?.forEach { note ->
+                note.secret = true
+                repository.updateNote(note)
+            }
+            getAllNotes()
+        }
+    }
+
+    fun unlockAllNotes() {
+        viewModelScope.launch {
+            _noteList.value?.forEach { note ->
+                note.secret = false
+                repository.updateNote(note)
+            }
+            getAllNotes()
+        }
+    }
+
+    fun deleteAllNotes() {
+        viewModelScope.launch {
+            repository.deleteAllNotes()
+        }
+    }
+
 }

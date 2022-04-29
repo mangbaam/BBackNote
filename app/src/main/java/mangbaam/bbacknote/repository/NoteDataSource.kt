@@ -7,4 +7,5 @@ interface NoteDataSource {
     suspend fun deleteNote(note: NoteEntity)
     suspend fun updateNote(note: NoteEntity)
     suspend fun getAllNotes(): List<NoteEntity>
+    suspend fun deleteAllNotes()
 }
