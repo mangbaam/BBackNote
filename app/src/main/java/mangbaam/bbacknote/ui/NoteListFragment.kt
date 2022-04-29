@@ -1,5 +1,7 @@
 package mangbaam.bbacknote.ui
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,8 +9,10 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -17,12 +21,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import mangbaam.bbacknote.MainActivity
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.adapter.NoteListAdapter
 import mangbaam.bbacknote.databinding.FragmentNoteListBinding
 import mangbaam.bbacknote.util.Contants.TAG
 import mangbaam.bbacknote.util.RecyclerViewUtil
+import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
 class NoteListFragment : Fragment() {
     private var _binding: FragmentNoteListBinding? = null
@@ -192,6 +198,8 @@ class NoteListFragment : Fragment() {
                 val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
                 val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
 
+                currentPasswordEditText?.setFocusAndShowKeyboard(requireContext())
+
                 cancelButton?.setOnClickListener {
                     dialog.dismiss()
                 }
@@ -217,7 +225,6 @@ class NoteListFragment : Fragment() {
             }
     }
 
-
     private fun requirePasswordDialog(result: ((Boolean) -> Unit)) {
         AlertDialog.Builder(requireContext())
             .setView(R.layout.dialog_require_password)
@@ -228,6 +235,8 @@ class NoteListFragment : Fragment() {
                 val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
                 val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
                 val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                passwordEditText?.setFocusAndShowKeyboard(requireContext())
 
                 cancelButton?.setOnClickListener {
                     dialog.dismiss()
@@ -255,6 +264,8 @@ class NoteListFragment : Fragment() {
                 val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
                 val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
                 val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                passwordEditText?.setFocusAndShowKeyboard(requireContext())
 
                 cancelButton?.setOnClickListener {
                     dialog.dismiss()
