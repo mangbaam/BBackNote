@@ -58,6 +58,7 @@ class NoteListAdapter(val onItemClicked: (NoteEntity, ClickedItem) -> Unit) :
                 binding.root.context,
                 R.drawable.rectangle_corner8_white
             )
+            binding.menuItemToolBar.title = note.title
             binding.noteContent.setOnClickListener {
                 onItemClicked(note, ClickedItem.CONTENT)
             }

@@ -24,6 +24,8 @@
                 android:id="@+id/menu_item_tool_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                tools:title="노트 제목 입니다"
+                app:titleTextAppearance="@style/TextAppearance.AppCompat.Small"
                 app:menu="@menu/menu_note_item" />
 
         </com.google.android.material.appbar.AppBarLayout>
