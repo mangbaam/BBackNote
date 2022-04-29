@@ -8,10 +8,12 @@ import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
@@ -116,7 +118,13 @@ class NoteListFragment : Fragment() {
         listAdapter = NoteListAdapter { note, item ->
             when (item) {
                 NoteListAdapter.ClickedItem.CONTENT -> {
-                    makeToast("$note 컨텐츠 확인")
+                    if (note.secret) {
+                        requirePasswordDialog { success ->
+                            if (success) {
+                                findNavController().navigate(R.id.action_noteListFragment_to_updateNoteFragment, bundleOf("note" to note))
+                            }
+                        }
+                    } else findNavController().navigate(R.id.action_noteListFragment_to_updateNoteFragment, bundleOf("note" to note))
                 }
                 NoteListAdapter.ClickedItem.LOCK_NOTE -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()

@@ -30,4 +30,5 @@
     <string name="btn_dialog_first_password_cancel">취소</string>
     <string name="hint_new_note_title">노트 제목</string>
     <string name="hint_new_note_content">내용 입력</string>
+    <string name="btn_update_note">수정</string>
 </resources>

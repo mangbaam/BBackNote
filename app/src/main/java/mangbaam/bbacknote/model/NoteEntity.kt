@@ -6,10 +6,10 @@ import java.io.Serializable
 
 @Entity
 data class NoteEntity(
-    val title: String = "",
-    val content: String,
+    var title: String = "",
+    var content: String,
     var secret: Boolean,
-    val noteColor: Int
+    var noteColor: Int
 ): Serializable {
     @PrimaryKey(autoGenerate = true) var id: Int = 0
 }

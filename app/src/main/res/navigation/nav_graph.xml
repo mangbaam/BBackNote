@@ -15,15 +15,24 @@
             app:launchSingleTop="true"
             app:popExitAnim="@anim/slide_down"
             app:popUpTo="@id/noteListFragment" />
+        <action
+            android:id="@+id/action_noteListFragment_to_updateNoteFragment"
+            app:destination="@id/updateNoteFragment"
+            app:enterAnim="@anim/fade_in"
+            app:launchSingleTop="true"
+            app:popExitAnim="@anim/zoom_out"
+            app:popUpTo="@id/noteListFragment" />
     </fragment>
     <fragment
         android:id="@+id/createNoteFragment"
         android:name="mangbaam.bbacknote.ui.CreateNoteFragment"
-        android:label="CreateNoteFragment" >
-        <action
-            android:id="@+id/action_createNoteFragment_to_noteListFragment"
-            app:destination="@id/noteListFragment"
-            app:exitAnim="@anim/slide_down"
-            app:launchSingleTop="true" />
+        android:label="CreateNoteFragment" />
+    <fragment
+        android:id="@+id/updateNoteFragment"
+        android:name="mangbaam.bbacknote.ui.UpdateNoteFragment"
+        android:label="UpdateNoteFragment" >
+        <argument
+            android:name="note"
+            app:argType="mangbaam.bbacknote.model.NoteEntity" />
     </fragment>
 </navigation>
