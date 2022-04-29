@@ -24,4 +24,8 @@
     <string name="title_dialog_change_password">비밀번호를 변경합니다</string>
     <string name="hint_dialog_change_password_edittext_current">현재 비밀 번호</string>
     <string name="hint_dialog_change_password_edittext_new">새로운 비밀 번호</string>
+    <string name="title_dialog_first_password">새 비밀번호를 입력하세요</string>
+    <string name="hint_dialog_first_password_edittext">비밀 번호 입력</string>
+    <string name="btn_dialog_first_password_complete">완료</string>
+    <string name="btn_dialog_first_password_cancel">취소</string>
 </resources>
