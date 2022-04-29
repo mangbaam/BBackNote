@@ -13,4 +13,12 @@
     <string name="hint_dialog_require_password_edittext">비밀 번호 입력</string>
     <string name="btn_require_password_complete">완료</string>
     <string name="btn_require_password_cancel">취소</string>
+    <string name="description_change_password_menu">change user password</string>
+    <string name="title_menu_note_list_change_password">비밀번호 변경</string>
+    <string name="description_menu_note_list_lock_all_notes">lock every notes</string>
+    <string name="title_menu_note_list_lock_all_notes">모든 노트 잠그기</string>
+    <string name="description_menu_note_list_unlock_all_notes">unlock every notes</string>
+    <string name="title_menu_note_list_unlock_all_notes">모든 노트 잠금 해제</string>
+    <string name="description_menu_note_list_delete_all_notes">delete every notes</string>
+    <string name="title_menu_note_list_delete_all_notes">모든 노트 삭제</string>
 </resources>

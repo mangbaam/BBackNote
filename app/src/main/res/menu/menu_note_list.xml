@@ -5,7 +5,30 @@
         android:id="@+id/search_note"
         android:contentDescription="@string/description_menu_note_list_search"
         android:icon="@drawable/ic_baseline_search_24"
-        app:showAsAction="always"
-        android:title="@string/menu_note_list_search" />
+        android:title="@string/menu_note_list_search"
+        app:showAsAction="ifRoom" />
 
+    <item
+        android:id="@+id/changed_password"
+        android:contentDescription="@string/description_change_password_menu"
+        android:title="@string/title_menu_note_list_change_password"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/lock_all_notes"
+        android:contentDescription="@string/description_menu_note_list_lock_all_notes"
+        android:title="@string/title_menu_note_list_lock_all_notes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/unlock_all_notes"
+        android:contentDescription="@string/description_menu_note_list_unlock_all_notes"
+        android:title="@string/title_menu_note_list_unlock_all_notes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/delete_all_notes"
+        android:contentDescription="@string/description_menu_note_list_delete_all_notes"
+        android:title="@string/title_menu_note_list_delete_all_notes"
+        app:showAsAction="never" />
 </menu>
