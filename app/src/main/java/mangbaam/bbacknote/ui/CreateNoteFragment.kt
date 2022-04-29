@@ -49,8 +49,7 @@ class CreateNoteFragment : Fragment() {
                         R.drawable.rectangle_corner8_white
                     )
                     viewModel.addNote(note)
-                    binding.root.findNavController()
-                        .navigate(R.id.action_createNoteFragment_to_noteListFragment)
+                    it.findNavController().popBackStack()
                 }
             } else {
                 Toast.makeText(it.context, "작성된 내용이 없어서 저장하지 않습니다", Toast.LENGTH_LONG).show()
