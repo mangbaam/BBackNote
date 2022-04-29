@@ -14,6 +14,9 @@ interface NoteDao {
     @Delete
     fun delete(note: NoteEntity)
 
+    @Query("SELECT * FROM NoteEntity WHERE NOT secret AND content LIKE :query")
+    fun search(query: String): List<NoteEntity>
+
     @Query("SELECT * FROM NoteEntity")
     fun getAllNote(): List<NoteEntity>
 

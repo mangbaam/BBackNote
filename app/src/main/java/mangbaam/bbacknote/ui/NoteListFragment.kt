@@ -1,26 +1,21 @@
 package mangbaam.bbacknote.ui
 
-import android.app.Activity
+import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import android.view.*
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
 import mangbaam.bbacknote.MainActivity
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
@@ -34,6 +29,8 @@ class NoteListFragment : Fragment() {
     private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
     private var toast: Toast? = null
+    private lateinit var searchView: SearchView
+    private lateinit var queryTextListener: SearchView.OnQueryTextListener
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
@@ -42,6 +39,11 @@ class NoteListFragment : Fragment() {
         )[MainViewModel::class.java]
     }
     private lateinit var listAdapter: NoteListAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +54,7 @@ class NoteListFragment : Fragment() {
 
         viewModel.getAllNotes()
 
+        setToolbar()
         initRecyclerView()
         onOptionItemsSelectListener()
 
@@ -60,6 +63,11 @@ class NoteListFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    private fun setToolbar() {
+        (requireActivity() as MainActivity).setSupportActionBar(binding.toolbarNoteList)
+        setHasOptionsMenu(true)
     }
 
     private fun onOptionItemsSelectListener() {
@@ -71,6 +79,36 @@ class NoteListFragment : Fragment() {
                 R.id.delete_all_notes -> deleteAllNotes()
             }
             true
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+
+        inflater.inflate(R.menu.menu_note_list, menu)
+        val activity = requireActivity() as MainActivity
+        val searchManager = activity.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+
+        queryTextListener = object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query.isNullOrBlank()) {
+                    viewModel.getAllNotes()
+                } else {
+                    viewModel.search(query)
+                }
+                return true
+            }
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { viewModel.search(it) }
+                return true
+            }
+        }
+
+        searchView = (menu.findItem(R.id.search_note).actionView as SearchView).apply {
+            maxWidth = Integer.MAX_VALUE
+            queryHint = "노트 내용으로 검색합니다"
+            setSearchableInfo(searchManager.getSearchableInfo(requireActivity().componentName))
+            setOnQueryTextListener(queryTextListener)
         }
     }
 

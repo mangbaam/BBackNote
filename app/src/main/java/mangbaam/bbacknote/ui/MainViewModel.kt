@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import mangbaam.bbacknote.model.NoteEntity
 import mangbaam.bbacknote.repository.NoteRepository
@@ -84,4 +85,9 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
         }
     }
 
+    fun search(query: String) {
+        viewModelScope.launch(Dispatchers.Default) {
+            _noteList.postValue(repository.search(query))
+        }
+    }
 }
