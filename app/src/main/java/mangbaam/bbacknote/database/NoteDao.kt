@@ -15,7 +15,7 @@ interface NoteDao {
     fun delete(note: NoteEntity)
 
     // TODO Flow 타입으로 반환하도록 개선
-    @Query("SELECT * FROM NoteEntity WHERE NOT secret AND content LIKE :query")
+    @Query("SELECT * FROM NoteEntity WHERE NOT secret AND content LIKE :query OR title LIKE :query")
     fun search(query: String): List<NoteEntity>
 
     @Query("SELECT * FROM NoteEntity")
