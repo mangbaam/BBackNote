@@ -20,6 +20,7 @@ import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentEditNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
+import mangbaam.bbacknote.util.onTextLength
 import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
 class UpdateNoteFragment : Fragment() {
@@ -62,6 +63,10 @@ class UpdateNoteFragment : Fragment() {
             }
         }
 
+        binding.noteContent.onTextLength {
+            binding.tvContentLength.text = it.toString()
+        }
+
         binding.btnUpdate.setOnClickListener {
             if (binding.noteContent.text.isNullOrBlank().not()) {
                 val updatedNote = NoteEntity(
@@ -102,6 +107,7 @@ class UpdateNoteFragment : Fragment() {
             isLockable = note.secret
             chkLock.isChecked = note.secret
             noteContent.setText(note.content)
+            tvContentLength.text = note.content.length.toString()
         }
     }
 

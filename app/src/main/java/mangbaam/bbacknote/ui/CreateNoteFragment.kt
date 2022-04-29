@@ -14,12 +14,12 @@ import androidx.navigation.findNavController
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentCreateNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
+import mangbaam.bbacknote.util.onTextLength
 import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
 class CreateNoteFragment : Fragment() {
@@ -57,6 +57,9 @@ class CreateNoteFragment : Fragment() {
                     if (isLockable) isLockable = false
                 }
             }
+        }
+        binding.noteContent.onTextLength {
+            binding.tvContentLength.text = it.toString()
         }
 
         binding.btnSave.setOnClickListener {

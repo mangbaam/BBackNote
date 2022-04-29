@@ -31,4 +31,5 @@
     <string name="hint_new_note_title">노트 제목</string>
     <string name="hint_new_note_content">내용 입력</string>
     <string name="btn_update_note">수정</string>
+    <string name="_0">0</string>
 </resources>
