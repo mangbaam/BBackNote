@@ -75,7 +75,10 @@ class NoteListFragment : Fragment() {
     private fun onOptionItemsSelectListener() {
         binding.toolbarNoteList.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.change_user_password -> changeUserPassword()
+                R.id.change_user_password -> {
+                    if (MyApplication.encryptedPrefs.getPassword().isNullOrBlank()) floatInitPasswordDialog {}
+                    else changeUserPassword()
+                }
                 R.id.lock_all_notes -> lockAllNotes()
                 R.id.unlock_all_notes -> unlockAllNotes()
                 R.id.delete_all_notes -> deleteAllNotes()
