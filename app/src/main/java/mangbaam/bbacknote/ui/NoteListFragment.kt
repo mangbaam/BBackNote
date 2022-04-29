@@ -26,7 +26,10 @@ class NoteListFragment : Fragment() {
     private var _binding: FragmentNoteListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(requireActivity(), ViewModelFactory(requireContext()))[MainViewModel::class.java]
+        ViewModelProvider(
+            requireActivity(),
+            ViewModelFactory(requireContext())
+        )[MainViewModel::class.java]
     }
     private lateinit var listAdapter: NoteListAdapter
 
@@ -48,62 +51,62 @@ class NoteListFragment : Fragment() {
         return binding.root
     }
 
-    private fun floatInitPassword(): Boolean {
-        var result = false
-
-        AlertDialog.Builder(requireContext())
-            .setView(R.layout.dialog_first_password)
-            .show()
-            .also { dialog ->
-                if (dialog == null) return@also
-
-                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
-                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
-                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
-
-                cancelButton?.setOnClickListener {
-                    dialog.dismiss()
-                    result = false
-                }
-                completeButton?.setOnClickListener {
-                    val password = passwordEditText?.text?.trim()
-                    when {
-                        password.isNullOrBlank() -> {
-                            passwordEditText?.error = "비밀번호를 다시 입력하세요"
-                            result = false
-                        }
-                        password.contains(" ") -> {
-                            passwordEditText.error = "비밀번호에 공백이 올 수 없습니다"
-                            result = false
-                        }
-                        else -> {
-                            MyApplication.encryptedPrefs.setPassword(password.toString())
-                            dialog.dismiss()
-                            result = true
-                        }
-                    }
-                }
-            }
-        return result
-    }
-
     private fun initRecyclerView() {
 
         listAdapter = NoteListAdapter { note, item ->
             when (item) {
-                NoteListAdapter.ClickedItem.CONTENT -> {Toast.makeText(requireContext(), "${note.id} 컨텐츠 확인", Toast.LENGTH_SHORT).show()}
+                NoteListAdapter.ClickedItem.CONTENT -> {
+                    Toast.makeText(requireContext(), "$note 컨텐츠 확인", Toast.LENGTH_SHORT).show()
+                }
                 NoteListAdapter.ClickedItem.LOCK_NOTE -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()
                     if (currentPassword.isNullOrBlank()) {
-                        val result = floatInitPassword()
-                        if (result) {
-                            viewModel.lockNote(note)
+                        floatInitPasswordDialog { success ->
+                            if (success) {
+                                requirePasswordDialog { result ->
+                                    if (result) {
+                                        viewModel.lockNote(note)
+                                    }
+                                }
+                            }
                         }
                     } else {
-                        Toast.makeText(requireContext(), "비밀번호 입력 다이얼로그", Toast.LENGTH_SHORT).show()
+                        requirePasswordDialog { result ->
+                            if (result) {
+                                viewModel.lockNote(note)
+                            }
+                        }
                     }
                 }
-                NoteListAdapter.ClickedItem.DELETE_NOTE -> { viewModel.deleteNote(note) }
+                NoteListAdapter.ClickedItem.DELETE_NOTE -> {
+                    if (note.secret) {
+                        requirePasswordDialog { result ->
+                            if (result) viewModel.deleteNote(note)
+                        }
+                    } else {
+                        viewModel.deleteNote(note)
+                    }
+                }
+                NoteListAdapter.ClickedItem.UNLOCK_NOTE -> {
+                    val currentPassword = MyApplication.encryptedPrefs.getPassword()
+                    if (currentPassword.isNullOrBlank()) {
+                        floatInitPasswordDialog { success ->
+                            if (success) {
+                                requirePasswordDialog { result ->
+                                    if (result) {
+                                        viewModel.unlockNote(note)
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        requirePasswordDialog { result ->
+                            if (result) {
+                                viewModel.unlockNote(note)
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -121,6 +124,69 @@ class NoteListFragment : Fragment() {
             Log.d(TAG, "NoteListFragment - submitList: $noteList")
             listAdapter.submitList(noteList)
         }
+    }
+
+    private fun requirePasswordDialog(result: ((Boolean) -> Unit)) {
+        AlertDialog.Builder(requireContext())
+            .setView(R.layout.dialog_require_password)
+            .show()
+            .also { dialog ->
+                if (dialog == null) return@also
+
+                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
+                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
+                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                cancelButton?.setOnClickListener {
+                    dialog.dismiss()
+                }
+                completeButton?.setOnClickListener {
+                    val password = passwordEditText?.text?.trim().toString()
+                    val userPassword = MyApplication.encryptedPrefs.getPassword()
+                    val same = password == userPassword
+                    result(same)
+                    if (!same) {
+                        Toast.makeText(it.context, "비밀번호가 일치하지 않습니다", Toast.LENGTH_SHORT).show()
+                    }
+                    dialog.dismiss()
+                }
+            }
+    }
+
+    private fun floatInitPasswordDialog(result: ((Boolean) -> Unit)) {
+        AlertDialog.Builder(requireContext())
+            .setView(R.layout.dialog_first_password)
+            .show()
+            .also { dialog ->
+                if (dialog == null) return@also
+
+                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
+                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
+                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                cancelButton?.setOnClickListener {
+                    dialog.dismiss()
+                    result(false)
+                }
+                completeButton?.setOnClickListener {
+                    val password = passwordEditText?.text?.trim()
+                    when {
+                        password.isNullOrBlank() -> {
+                            passwordEditText?.error = "비밀번호를 다시 입력하세요"
+                            result(false)
+                        }
+                        password.contains(" ") -> {
+                            passwordEditText.error = "비밀번호에 공백이 올 수 없습니다"
+                            result(false)
+                        }
+                        else -> {
+                            MyApplication.encryptedPrefs.setPassword(password.toString())
+                            dialog.dismiss()
+                            result(true)
+                        }
+                    }
+                }
+            }
     }
 
     override fun onDestroyView() {

@@ -7,11 +7,15 @@
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/drawable/rectangle_corner8_white.xml" value="0.2725" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/activity_main.xml" value="0.34739583333333335" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/dialog_first_password.xml" value="0.264" />
+        <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/dialog_require_password.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/fragment_create_note.xml" value="0.2" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/fragment_note_list.xml" value="0.2" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/item_note.xml" value="0.264" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/item_note_locked.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/layout/item_secret_note.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/menu/menu_note_item.xml" value="0.24947916666666667" />
+        <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/menu/menu_note_list.xml" value="0.3619791666666667" />
+        <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/menu/menu_secret_note_item.xml" value="0.3619791666666667" />
         <entry key="..\:/Users/audqj/AndroidStudioProjects/BBackNote/app/src/main/res/menu/menu_top_app_bar.xml" value="0.3619791666666667" />
       </map>
     </option>

@@ -8,54 +8,89 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.ItemNoteBinding
+import mangbaam.bbacknote.databinding.ItemSecretNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
 
 class NoteListAdapter(val onItemClicked: (NoteEntity, ClickedItem) -> Unit) :
-    ListAdapter<NoteEntity, NoteListAdapter.ListViewHolder>(diffUtil) {
+    ListAdapter<NoteEntity, RecyclerView.ViewHolder>(diffUtil) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
-        return ListViewHolder(
-            ItemNoteBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            UNLOCKED_NOTE -> {
+                UnlockedNoteViewHolder(
+                    ItemNoteBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+            LOCKED_NOTE -> {
+                LockedNoteViewHolder(
+                    ItemSecretNoteBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
+            }
+            else -> throw IllegalArgumentException("$viewType : Invalid Note Type")
+        }
     }
 
-    override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        holder.bind(currentList[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (getItemViewType(position) == UNLOCKED_NOTE) {
+            (holder as UnlockedNoteViewHolder).bind(currentList[position])
+        } else {
+            (holder as LockedNoteViewHolder).bind(currentList[position])
+        }
     }
 
-    inner class ListViewHolder(private val binding: ItemNoteBinding) :
+    override fun getItemViewType(position: Int): Int {
+        return if (currentList[position].secret) LOCKED_NOTE else UNLOCKED_NOTE
+    }
+
+    inner class UnlockedNoteViewHolder(private val binding: ItemNoteBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(note: NoteEntity) {
-            if (note.secret) {
-                // TODO 문장 노출 x
-                // TODO "비밀메모 입니다" 혹은 잠금 표시로 노출
-                // TODO 클릭 시 암호 입력해야 상세 화면으로 이동
-            } else {
-                // TODO 일반 메모는 상세 화면에서 비밀 메모로 변환 가능
-                // TODO 비밀메모로 변환 시 입력창이 뜨고 입력하면 바뀜
-                binding.noteContent.text = note.content.trim()
-                binding.root.background = ContextCompat.getDrawable(
-                    binding.root.context,
-                    R.drawable.rectangle_corner8_white
-                )
-                binding.noteContent.setOnClickListener {
-                    onItemClicked(note, ClickedItem.CONTENT)
-                }
-                binding.menuItemToolBar.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.lock_note_item -> {
-                            onItemClicked(note, ClickedItem.LOCK_NOTE)
-                        }
-                        R.id.delete_note_item -> {
-                            onItemClicked(note, ClickedItem.DELETE_NOTE)
-                        }
+            binding.noteContent.text = note.content.trim()
+            binding.root.background = ContextCompat.getDrawable(
+                binding.root.context,
+                R.drawable.rectangle_corner8_white
+            )
+            binding.noteContent.setOnClickListener {
+                onItemClicked(note, ClickedItem.CONTENT)
+            }
+            binding.menuItemToolBar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.lock_note_item -> {
+                        onItemClicked(note, ClickedItem.LOCK_NOTE)
                     }
-                    true
+                    R.id.delete_note_item -> {
+                        onItemClicked(note, ClickedItem.DELETE_NOTE)
+                    }
                 }
+                true
+            }
+        }
+    }
+
+    inner class LockedNoteViewHolder(private val binding: ItemSecretNoteBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(note: NoteEntity) {
+            binding.menuItemToolBar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.unlock_note_item -> {
+                        onItemClicked(note, ClickedItem.UNLOCK_NOTE)
+                    }
+                    R.id.delete_note_item -> {
+                        onItemClicked(note, ClickedItem.DELETE_NOTE)
+                    }
+                }
+                true
+            }
+            binding.noteContent.setOnClickListener {
+                onItemClicked(note, ClickedItem.CONTENT)
             }
         }
     }
@@ -70,11 +105,14 @@ class NoteListAdapter(val onItemClicked: (NoteEntity, ClickedItem) -> Unit) :
                 return oldItem == newItem
             }
         }
+        private const val UNLOCKED_NOTE = 0
+        private const val LOCKED_NOTE = 1
     }
 
     enum class ClickedItem {
         CONTENT,
         LOCK_NOTE,
+        UNLOCK_NOTE,
         DELETE_NOTE
     }
 }

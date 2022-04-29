@@ -6,4 +6,11 @@
     <string name="hint_password">암호</string>
     <string name="chk_lock_memo">메모 잠금</string>
     <string name="description_fab_add_note">Add note button</string>
+    <string name="dialog_require_password_title">비밀번호를 입력하세요</string>
+    <string name="description_secret_note">secret note view</string>
+    <string name="menu_secret_note_item_title_unlock">잠금 해제</string>
+    <string name="menu_secret_note_item_title_delete_note">노트 삭제</string>
+    <string name="hint_dialog_require_password_edittext">비밀 번호 입력</string>
+    <string name="btn_require_password_complete">완료</string>
+    <string name="btn_require_password_cancel">취소</string>
 </resources>

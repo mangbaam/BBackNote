@@ -1,6 +1,5 @@
 package mangbaam.bbacknote.repository
 
-import androidx.lifecycle.MutableLiveData
 import mangbaam.bbacknote.model.NoteEntity
 
 class NoteRepository(private val dataSource: NoteLocalDataSource) {
