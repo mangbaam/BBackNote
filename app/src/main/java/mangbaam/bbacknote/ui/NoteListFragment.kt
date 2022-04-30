@@ -206,6 +206,8 @@ class NoteListFragment : Fragment() {
         viewModel.noteList.observe(viewLifecycleOwner) { noteList ->
             Log.d(TAG, "NoteListFragment - submitList: $noteList")
             listAdapter.submitList(noteList)
+            binding.lottieFire.visibility = if (noteList.isEmpty()) View.VISIBLE else View.GONE
+            binding.tvEmptyNoteDescription.visibility = if (noteList.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
@@ -361,15 +363,17 @@ class NoteListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (searchView.isIconified.not()) searchView.isIconified = true
-                else {
-                    isEnabled = false
-                    requireActivity().onBackPressed()
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (searchView.isIconified.not()) searchView.isIconified = true
+                    else {
+                        isEnabled = false
+                        requireActivity().onBackPressed()
+                    }
                 }
-            }
-        })
+            })
     }
 
     override fun onDestroyView() {

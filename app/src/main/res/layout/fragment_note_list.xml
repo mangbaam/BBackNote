@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View" />
+
         <variable
             name="viewmodel"
             type="mangbaam.bbacknote.ui.MainViewModel" />
@@ -57,6 +59,27 @@
 
         </androidx.core.widget.NestedScrollView>
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_fire"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="50dp"
+            android:visibility="@{viewmodel.noteList.empty ? View.VISIBLE : View.GONE}"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/firewood" />
+
+        <TextView
+            android:id="@+id/tv_empty_note_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/description_empty_list"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:visibility="@{viewmodel.noteList.empty ? View.VISIBLE : View.GONE}" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_add_note"
             android:layout_width="wrap_content"
@@ -67,8 +90,6 @@
             android:clickable="true"
             android:contentDescription="@string/description_fab_add_note"
             android:focusable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@android:drawable/ic_input_add" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
