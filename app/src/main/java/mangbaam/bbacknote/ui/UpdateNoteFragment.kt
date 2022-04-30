@@ -1,6 +1,9 @@
 package mangbaam.bbacknote.ui
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +24,7 @@ import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentEditNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
+import mangbaam.bbacknote.util.Contants.TAG
 import mangbaam.bbacknote.util.onTextLength
 import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
@@ -28,7 +33,7 @@ class UpdateNoteFragment : Fragment() {
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
     private var toast: Toast? = null
-    private var isLockable: Boolean = false
+    private var isLocked: Boolean = false
     private val note by lazy { requireArguments().getSerializable("note") as NoteEntity }
 
     private val viewModel: MainViewModel by lazy {
@@ -48,7 +53,7 @@ class UpdateNoteFragment : Fragment() {
 
         setNoteData()
 
-        binding.chkLock.setOnCheckedChangeListener { checkBox, checked ->
+        /*binding.chkLock.setOnCheckedChangeListener { checkBox, checked ->
             lifecycleScope.launch(Dispatchers.Main) {
                 if (checked) {
                     if (isLockable.not()) {
@@ -59,6 +64,29 @@ class UpdateNoteFragment : Fragment() {
                     }
                 } else {
                     if (isLockable) isLockable = false
+                }
+            }
+        }*/
+        val lock = binding.lottieLock
+
+        lock.setOnClickListener {
+            Log.d(TAG, "UpdateNoteFragment - lock clicked: $isLocked")
+            when (isLocked) {
+                true -> {
+                    val animator = ValueAnimator.ofFloat(0.9F, 0F).setDuration(500)
+                    animator.addUpdateListener { lock.progress = it.animatedValue as Float }
+                    animator.start()
+                    isLocked = false
+                }
+                false -> {
+                    requirePasswordDialog { success ->
+                        if (success) {
+                            val animator = ValueAnimator.ofFloat(0F, 0.9F).setDuration(500)
+                            animator.addUpdateListener { lock.progress = it.animatedValue as Float }
+                            animator.start()
+                            isLocked = true
+                        }
+                    }
                 }
             }
         }
@@ -72,7 +100,7 @@ class UpdateNoteFragment : Fragment() {
                 val updatedNote = NoteEntity(
                     binding.etTitle.text.toString().trim(),
                     binding.noteContent.text.toString().trim(),
-                    isLockable,
+                    isLocked,
                     R.drawable.rectangle_corner8_white
                 )
                 if (note.title == updatedNote.title &&
@@ -104,10 +132,10 @@ class UpdateNoteFragment : Fragment() {
     private fun setNoteData() {
         binding.run {
             etTitle.setText(note.title)
-            isLockable = note.secret
-            chkLock.isChecked = note.secret
+            isLocked = note.secret
             noteContent.setText(note.content)
             tvContentLength.text = note.content.length.toString()
+            lottieLock.progress = if (note.secret) 0.9F else 0F
         }
     }
 

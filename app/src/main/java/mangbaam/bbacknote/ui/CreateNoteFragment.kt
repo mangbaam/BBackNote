@@ -1,5 +1,6 @@
 package mangbaam.bbacknote.ui
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +28,7 @@ class CreateNoteFragment : Fragment() {
     private var _binding: FragmentCreateNoteBinding? = null
     private val binding get() = _binding!!
     private var toast: Toast? = null
-    private var isLockable: Boolean = false
+    private var isLocked: Boolean = false
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
@@ -44,7 +45,7 @@ class CreateNoteFragment : Fragment() {
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_create_note, container, false)
 
-        binding.chkLock.setOnCheckedChangeListener { checkBox, checked ->
+        /*binding.chkLock.setOnCheckedChangeListener { checkBox, checked ->
             lifecycleScope.launch(Dispatchers.Main) {
                 if (checked) {
                     if (isLockable.not()) {
@@ -57,7 +58,32 @@ class CreateNoteFragment : Fragment() {
                     if (isLockable) isLockable = false
                 }
             }
+        }*/
+        val lock = binding.lottieLock
+
+        lock.setOnClickListener {
+            when (isLocked) {
+                true -> {
+                    val animator = ValueAnimator.ofFloat(0.9F, 0F).setDuration(500)
+                    animator.addUpdateListener { lock.progress = it.animatedValue as Float }
+                    animator.start()
+                    isLocked = false
+                }
+                false -> {
+                    requirePasswordDialog { success ->
+                        if (success) {
+                            val animator = ValueAnimator.ofFloat(0F, 0.9F).setDuration(500)
+                            animator.addUpdateListener { lock.progress = it.animatedValue as Float }
+                            animator.start()
+                            isLocked = true
+                        }
+                    }
+                }
+            }
         }
+
+        binding.lottieLock.progress = 0F
+
         binding.noteContent.onTextLength {
             binding.tvContentLength.text = it.toString()
         }
@@ -67,7 +93,7 @@ class CreateNoteFragment : Fragment() {
                 val note = NoteEntity(
                     binding.etTitle.text.toString().trim(),
                     binding.noteContent.text.toString().trim(),
-                    isLockable,
+                    isLocked,
                     R.drawable.rectangle_corner8_white
                 )
                 viewModel.addNote(note)

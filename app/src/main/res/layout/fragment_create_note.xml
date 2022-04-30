@@ -21,20 +21,19 @@
             android:maxLines="1"
             android:padding="8dp"
             app:hintTextAppearance="@style/TextAppearance.AppCompat.Caption"
-            app:layout_constraintBottom_toBottomOf="@id/chk_lock"
-            app:layout_constraintEnd_toStartOf="@+id/chk_lock"
+            app:layout_constraintBottom_toBottomOf="@id/lottie_lock"
+            app:layout_constraintEnd_toStartOf="@+id/lottie_lock"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/chk_lock"
+            app:layout_constraintTop_toTopOf="@id/lottie_lock"
             tools:text=""
             tools:visibility="visible" />
 
-        <CheckBox
-            android:id="@+id/chk_lock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_lock"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_marginEnd="16dp"
-            android:checked="false"
-            android:text="@string/chk_lock_memo"
+            app:lottie_rawRes="@raw/lock"
             app:layout_constraintBottom_toBottomOf="@id/btn_save"
             app:layout_constraintEnd_toStartOf="@+id/btn_save"
             app:layout_constraintTop_toTopOf="@id/btn_save" />
