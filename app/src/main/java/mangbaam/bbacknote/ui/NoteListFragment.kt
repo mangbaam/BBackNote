@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.*
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
@@ -23,6 +25,7 @@ import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.adapter.NoteListAdapter
 import mangbaam.bbacknote.databinding.FragmentNoteListBinding
+import mangbaam.bbacknote.util.BackKeyHandler
 import mangbaam.bbacknote.util.Contants.TAG
 import mangbaam.bbacknote.util.RecyclerViewUtil
 import mangbaam.bbacknote.util.setFocusAndShowKeyboard
@@ -76,7 +79,9 @@ class NoteListFragment : Fragment() {
         binding.toolbarNoteList.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.change_user_password -> {
-                    if (MyApplication.encryptedPrefs.getPassword().isNullOrBlank()) floatInitPasswordDialog {}
+                    if (MyApplication.encryptedPrefs.getPassword()
+                            .isNullOrBlank()
+                    ) floatInitPasswordDialog {}
                     else changeUserPassword()
                 }
                 R.id.lock_all_notes -> lockAllNotes()
@@ -103,6 +108,7 @@ class NoteListFragment : Fragment() {
                 }
                 return true
             }
+
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let { viewModel.search(it) }
                 return true
@@ -124,10 +130,16 @@ class NoteListFragment : Fragment() {
                     if (note.secret) {
                         requirePasswordDialog { success ->
                             if (success) {
-                                findNavController().navigate(R.id.action_noteListFragment_to_updateNoteFragment, bundleOf("note" to note))
+                                findNavController().navigate(
+                                    R.id.action_noteListFragment_to_updateNoteFragment,
+                                    bundleOf("note" to note)
+                                )
                             }
                         }
-                    } else findNavController().navigate(R.id.action_noteListFragment_to_updateNoteFragment, bundleOf("note" to note))
+                    } else findNavController().navigate(
+                        R.id.action_noteListFragment_to_updateNoteFragment,
+                        bundleOf("note" to note)
+                    )
                 }
                 NoteListAdapter.ClickedItem.LOCK_NOTE -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()
@@ -345,6 +357,19 @@ class NoteListFragment : Fragment() {
         toast?.cancel()
         toast = Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT)
         toast?.show()
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (searchView.isIconified.not()) searchView.isIconified = true
+                else {
+                    isEnabled = false
+                    requireActivity().onBackPressed()
+                }
+            }
+        })
     }
 
     override fun onDestroyView() {
