@@ -64,8 +64,8 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
             _noteList.value?.forEach { note ->
                 note.secret = true
                 repository.updateNote(note)
+                getAllNotes()
             }
-            getAllNotes()
         }
     }
 
@@ -74,14 +74,15 @@ class MainViewModel(private val repository: NoteRepository): ViewModel() {
             _noteList.value?.forEach { note ->
                 note.secret = false
                 repository.updateNote(note)
+                getAllNotes()
             }
-            getAllNotes()
         }
     }
 
     fun deleteAllNotes() {
         viewModelScope.launch {
             repository.deleteAllNotes()
+            _noteList.value = emptyList()
         }
     }
 
