@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
@@ -45,20 +46,6 @@ class CreateNoteFragment : Fragment() {
         _binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_create_note, container, false)
 
-        /*binding.chkLock.setOnCheckedChangeListener { checkBox, checked ->
-            lifecycleScope.launch(Dispatchers.Main) {
-                if (checked) {
-                    if (isLockable.not()) {
-                        requirePasswordDialog { success ->
-                            checkBox.isChecked = success
-                            isLockable = success
-                        }
-                    }
-                } else {
-                    if (isLockable) isLockable = false
-                }
-            }
-        }*/
         val lock = binding.lottieLock
 
         lock.setOnClickListener {
@@ -70,12 +57,14 @@ class CreateNoteFragment : Fragment() {
                     isLocked = false
                 }
                 false -> {
-                    requirePasswordDialog { success ->
-                        if (success) {
-                            val animator = ValueAnimator.ofFloat(0F, 0.9F).setDuration(500)
-                            animator.addUpdateListener { lock.progress = it.animatedValue as Float }
-                            animator.start()
-                            isLocked = true
+                    val currentPassword = MyApplication.encryptedPrefs.getPassword()
+                    if (currentPassword.isNullOrBlank()) {
+                        floatInitPasswordDialog { success ->
+                            lockNoteIfPasswordSuccess(success, lock)
+                        }
+                    } else {
+                        requirePasswordDialog { success ->
+                            lockNoteIfPasswordSuccess(success, lock)
                         }
                     }
                 }
@@ -137,6 +126,55 @@ class CreateNoteFragment : Fragment() {
                 }
             }
         result(false)
+    }
+
+    private fun floatInitPasswordDialog(result: ((Boolean) -> Unit)) {
+        AlertDialog.Builder(requireContext())
+            .setView(R.layout.dialog_first_password)
+            .show()
+            .also { dialog ->
+                if (dialog == null) return@also
+
+                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
+                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
+                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
+
+                passwordEditText?.setFocusAndShowKeyboard(requireContext())
+
+                cancelButton?.setOnClickListener {
+                    dialog.dismiss()
+                    result(false)
+                }
+                completeButton?.setOnClickListener {
+                    val password = passwordEditText?.text?.trim()
+                    when {
+                        password.isNullOrBlank() -> {
+                            passwordEditText?.error = "비밀번호를 다시 입력하세요"
+                            result(false)
+                        }
+                        password.contains(" ") -> {
+                            passwordEditText.error = "비밀번호에 공백이 올 수 없습니다"
+                            result(false)
+                        }
+                        else -> {
+                            MyApplication.encryptedPrefs.setPassword(password.toString())
+                            dialog.dismiss()
+                            result(true)
+                        }
+                    }
+                }
+            }
+    }
+
+    private fun lockNoteIfPasswordSuccess(success: Boolean, lock: LottieAnimationView) {
+        if (success) {
+            val animator = ValueAnimator.ofFloat(0F, 0.9F).setDuration(500)
+            animator.addUpdateListener {
+                lock.progress = it.animatedValue as Float
+            }
+            animator.start()
+            isLocked = true
+        }
     }
 
     private fun makeToast(msg: String) {
