@@ -10,17 +10,15 @@ import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentCreateNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
+import mangbaam.bbacknote.util.DialogBuilder
 import mangbaam.bbacknote.util.onTextLength
 import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
@@ -30,6 +28,7 @@ class CreateNoteFragment : Fragment() {
     private val binding get() = _binding!!
     private var toast: Toast? = null
     private var isLocked: Boolean = false
+    private val dialogBuilder by lazy { DialogBuilder(requireContext()) }
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
@@ -59,11 +58,11 @@ class CreateNoteFragment : Fragment() {
                 false -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()
                     if (currentPassword.isNullOrBlank()) {
-                        floatInitPasswordDialog { success ->
+                        dialogBuilder.requireInitPasswordDialog { success ->
                             lockNoteIfPasswordSuccess(success, lock)
                         }
                     } else {
-                        requirePasswordDialog { success ->
+                        dialogBuilder.requirePasswordDialog { success ->
                             lockNoteIfPasswordSuccess(success, lock)
                         }
                     }

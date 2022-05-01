@@ -6,21 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
 import mangbaam.bbacknote.MyApplication
 import mangbaam.bbacknote.R
 import mangbaam.bbacknote.databinding.FragmentEditNoteBinding
 import mangbaam.bbacknote.model.NoteEntity
+import mangbaam.bbacknote.util.DialogBuilder
 import mangbaam.bbacknote.util.onTextLength
-import mangbaam.bbacknote.util.setFocusAndShowKeyboard
 
 class UpdateNoteFragment : Fragment() {
 
@@ -29,6 +26,7 @@ class UpdateNoteFragment : Fragment() {
     private var toast: Toast? = null
     private var isLocked: Boolean = false
     private val note by lazy { requireArguments().getSerializable("note") as NoteEntity }
+    private val dialogBuilder: DialogBuilder by lazy { DialogBuilder(requireContext()) }
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProvider(
@@ -60,12 +58,12 @@ class UpdateNoteFragment : Fragment() {
                 false -> {
                     val currentPassword = MyApplication.encryptedPrefs.getPassword()
                     if (currentPassword.isNullOrBlank()) {
-                        floatInitPasswordDialog { success ->
-                            lockNoteIfPasswordSuccess(success, lock)
+                        dialogBuilder.requireInitPasswordDialog { result ->
+                            lockNoteIfPasswordSuccess(result, lock)
                         }
                     } else {
-                        requirePasswordDialog { success ->
-                            lockNoteIfPasswordSuccess(success, lock)
+                        dialogBuilder.requirePasswordDialog { result ->
+                            lockNoteIfPasswordSuccess(result, lock)
                         }
                     }
                 }
@@ -118,75 +116,6 @@ class UpdateNoteFragment : Fragment() {
             tvContentLength.text = note.content.length.toString()
             lottieLock.progress = if (note.secret) 0.9F else 0F
         }
-    }
-
-    private fun requirePasswordDialog(result: ((Boolean) -> Unit)) {
-        AlertDialog.Builder(requireContext())
-            .setView(R.layout.dialog_require_password)
-            .show()
-            .also { dialog ->
-                if (dialog == null) return@also
-
-                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
-                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
-                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
-
-                passwordEditText?.setFocusAndShowKeyboard(requireContext())
-
-                cancelButton?.setOnClickListener {
-                    result(false)
-                    dialog.dismiss()
-                }
-                completeButton?.setOnClickListener {
-                    val password = passwordEditText?.text?.trim().toString()
-                    val userPassword = MyApplication.encryptedPrefs.getPassword()
-                    val same = password == userPassword
-                    result(same)
-                    if (!same) {
-                        makeToast("비밀번호가 일치하지 않습니다")
-                    }
-                    dialog.dismiss()
-                }
-            }
-        result(false)
-    }
-
-    private fun floatInitPasswordDialog(result: ((Boolean) -> Unit)) {
-        AlertDialog.Builder(requireContext())
-            .setView(R.layout.dialog_first_password)
-            .show()
-            .also { dialog ->
-                if (dialog == null) return@also
-
-                val passwordEditText = dialog.findViewById<TextInputEditText>(R.id.et_password)
-                val completeButton = dialog.findViewById<MaterialButton>(R.id.btn_complete)
-                val cancelButton = dialog.findViewById<MaterialButton>(R.id.btn_cancel)
-
-                passwordEditText?.setFocusAndShowKeyboard(requireContext())
-
-                cancelButton?.setOnClickListener {
-                    dialog.dismiss()
-                    result(false)
-                }
-                completeButton?.setOnClickListener {
-                    val password = passwordEditText?.text?.trim()
-                    when {
-                        password.isNullOrBlank() -> {
-                            passwordEditText?.error = "비밀번호를 다시 입력하세요"
-                            result(false)
-                        }
-                        password.contains(" ") -> {
-                            passwordEditText.error = "비밀번호에 공백이 올 수 없습니다"
-                            result(false)
-                        }
-                        else -> {
-                            MyApplication.encryptedPrefs.setPassword(password.toString())
-                            dialog.dismiss()
-                            result(true)
-                        }
-                    }
-                }
-            }
     }
 
     private fun lockNoteIfPasswordSuccess(success: Boolean, lock: LottieAnimationView) {
